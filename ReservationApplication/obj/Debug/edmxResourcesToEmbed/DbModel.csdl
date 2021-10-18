@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="AirbnbDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Admin">
+    <Key>
+      <PropertyRef Name="AdminID" />
+    </Key>
+    <Property Name="AdminID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Admin_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Admin_Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Admin_Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Guests" Relationship="Self.FK_Guests_Admin" FromRole="Admin" ToRole="Guests" />
+    <NavigationProperty Name="Histories" Relationship="Self.FK_History_Admin" FromRole="Admin" ToRole="History" />
+    <NavigationProperty Name="Locations" Relationship="Self.FK_Locations_Admin" FromRole="Admin" ToRole="Locations" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_Users_Admin" FromRole="Admin" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="Guest">
+    <Key>
+      <PropertyRef Name="Guest_ID" />
+    </Key>
+    <Property Name="Guest_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Guest_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Location_ID" Type="Int32" Nullable="false" />
+    <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_Guests_Admin" FromRole="Guests" ToRole="Admin" />
+    <NavigationProperty Name="Location" Relationship="Self.FK_Guests_Locations" FromRole="Guests" ToRole="Locations" />
+  </EntityType>
+  <EntityType Name="History">
+    <Key>
+      <PropertyRef Name="History_ID" />
+    </Key>
+    <Property Name="History_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="User_ID" Type="Int32" Nullable="false" />
+    <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_History_Admin" FromRole="History" ToRole="Admin" />
+  </EntityType>
+  <EntityType Name="Location">
+    <Key>
+      <PropertyRef Name="LocationID" />
+    </Key>
+    <Property Name="LocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Location_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Location_Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Location_Price" Type="Double" />
+    <Property Name="Location_IS_Reserved" Type="Boolean" Nullable="false" />
+    <Property Name="Location_Images" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="User_ID" Type="Int32" />
+    <Property Name="Admin_ID" Type="Int32" />
+    <Property Name="Guest_ID" Type="Int32" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_Locations_Admin" FromRole="Locations" ToRole="Admin" />
+    <NavigationProperty Name="Guests" Relationship="Self.FK_Guests_Locations" FromRole="Locations" ToRole="Guests" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_Users_Locations" FromRole="Locations" ToRole="Users" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="User_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Location_ID" Type="Int32" Nullable="false" />
+    <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_Users_Admin" FromRole="Users" ToRole="Admin" />
+    <NavigationProperty Name="Location" Relationship="Self.FK_Users_Locations" FromRole="Users" ToRole="Locations" />
+  </EntityType>
+  <Association Name="FK_Guests_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="1" />
+    <End Role="Guests" Type="Self.Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="Guests">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_History_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="1" />
+    <End Role="History" Type="Self.History" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="History">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Locations_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="0..1" />
+    <End Role="Locations" Type="Self.Location" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="Locations">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Users_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="1" />
+    <End Role="Users" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="Users">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Guests_Locations">
+    <End Role="Locations" Type="Self.Location" Multiplicity="1" />
+    <End Role="Guests" Type="Self.Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Locations">
+        <PropertyRef Name="LocationID" />
+      </Principal>
+      <Dependent Role="Guests">
+        <PropertyRef Name="Location_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Users_Locations">
+    <End Role="Locations" Type="Self.Location" Multiplicity="1" />
+    <End Role="Users" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Locations">
+        <PropertyRef Name="LocationID" />
+      </Principal>
+      <Dependent Role="Users">
+        <PropertyRef Name="Location_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="AirbnbDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Admins" EntityType="Self.Admin" />
+    <EntitySet Name="Guests" EntityType="Self.Guest" />
+    <EntitySet Name="Histories" EntityType="Self.History" />
+    <EntitySet Name="Locations" EntityType="Self.Location" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK_Guests_Admin" Association="Self.FK_Guests_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="Guests" EntitySet="Guests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_History_Admin" Association="Self.FK_History_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="History" EntitySet="Histories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Locations_Admin" Association="Self.FK_Locations_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="Locations" EntitySet="Locations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Users_Admin" Association="Self.FK_Users_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="Users" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Guests_Locations" Association="Self.FK_Guests_Locations">
+      <End Role="Locations" EntitySet="Locations" />
+      <End Role="Guests" EntitySet="Guests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Users_Locations" Association="Self.FK_Users_Locations">
+      <End Role="Locations" EntitySet="Locations" />
+      <End Role="Users" EntitySet="Users" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

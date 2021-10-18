@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="AirbnbDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Admin">
+    <Key>
+      <PropertyRef Name="AdminID" />
+    </Key>
+    <Property Name="AdminID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Admin_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Admin_Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Admin_Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Guests" Relationship="Self.FK_Guests_Admin" FromRole="Admin" ToRole="Guests" />
+    <NavigationProperty Name="Histories" Relationship="Self.FK_History_Admin" FromRole="Admin" ToRole="History" />
+    <NavigationProperty Name="Locations" Relationship="AirbnbDBModel.FK_Locations_Admin" FromRole="Admin" ToRole="Location" />
+  </EntityType>
+  <EntityType Name="Guest">
+    <Key>
+      <PropertyRef Name="Guest_ID" />
+    </Key>
+    <Property Name="Guest_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Guest_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Location_ID" Type="Int32" Nullable="false" />
+    <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_Guests_Admin" FromRole="Guests" ToRole="Admin" />
+    <NavigationProperty Name="Location" Relationship="AirbnbDBModel.FK_Guests_Locations" FromRole="Guest" ToRole="Location" />
+  </EntityType>
+  <EntityType Name="History">
+    <Key>
+      <PropertyRef Name="History_ID" />
+    </Key>
+    <Property Name="History_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="User_ID" Type="Int32" Nullable="false" />
+    <Property Name="Admin_ID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Admin" Relationship="Self.FK_History_Admin" FromRole="History" ToRole="Admin" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="User_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="User_Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Guests_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="1" />
+    <End Role="Guests" Type="Self.Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="Guests">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_History_Admin">
+    <End Role="Admin" Type="Self.Admin" Multiplicity="1" />
+    <End Role="History" Type="Self.History" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="History">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="AirbnbDBEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Admins" EntityType="Self.Admin" />
+    <EntitySet Name="Guests" EntityType="Self.Guest" />
+    <EntitySet Name="Histories" EntityType="Self.History" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK_Guests_Admin" Association="Self.FK_Guests_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="Guests" EntitySet="Guests" />
+    </AssociationSet>
+    <AssociationSet Name="FK_History_Admin" Association="Self.FK_History_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="History" EntitySet="Histories" />
+    </AssociationSet>
+    <EntitySet Name="Locations" EntityType="AirbnbDBModel.Location" />
+    <AssociationSet Name="FK_Locations_Admin" Association="AirbnbDBModel.FK_Locations_Admin">
+      <End Role="Admin" EntitySet="Admins" />
+      <End Role="Location" EntitySet="Locations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Guests_Locations" Association="AirbnbDBModel.FK_Guests_Locations">
+      <End Role="Location" EntitySet="Locations" />
+      <End Role="Guest" EntitySet="Guests" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Location">
+    <Key>
+      <PropertyRef Name="LocationID" />
+    </Key>
+    <Property Name="LocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Location_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Location_Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Location_Price" Type="Double" />
+    <Property Name="Location_IS_Reserved" Type="Int32" />
+    <Property Name="Location_Images" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="User_ID" Type="Int32" />
+    <Property Name="Admin_ID" Type="Int32" />
+    <Property Name="Guest_ID" Type="Int32" />
+    <NavigationProperty Name="Admin" Relationship="AirbnbDBModel.FK_Locations_Admin" FromRole="Location" ToRole="Admin" />
+    <NavigationProperty Name="Guests" Relationship="AirbnbDBModel.FK_Guests_Locations" FromRole="Location" ToRole="Guest" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="imgNumber" Type="Int32" />
+  </EntityType>
+  <Association Name="FK_Locations_Admin">
+    <End Type="AirbnbDBModel.Admin" Role="Admin" Multiplicity="0..1" />
+    <End Type="AirbnbDBModel.Location" Role="Location" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Admin">
+        <PropertyRef Name="AdminID" />
+      </Principal>
+      <Dependent Role="Location">
+        <PropertyRef Name="Admin_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Guests_Locations">
+    <End Type="AirbnbDBModel.Location" Role="Location" Multiplicity="1" />
+    <End Type="AirbnbDBModel.Guest" Role="Guest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Location">
+        <PropertyRef Name="LocationID" />
+      </Principal>
+      <Dependent Role="Guest">
+        <PropertyRef Name="Location_ID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
